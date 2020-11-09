@@ -234,6 +234,8 @@ formUI <- function(formInfo) {
           }
         )
       ),
+      print(ns("submit"))
+      
       actionButton(ns("submit"), "Submit", class = "btn-primary"),
       if (!is.null(formInfo$reset) && formInfo$reset) {
         actionButton(ns("reset"), "Reset")
@@ -278,10 +280,10 @@ formUI <- function(formInfo) {
       ))
     )),
     
-    div(class = "created-by",
-        "Created with",
-        a(href = "https://github.com/daattali/shinyforms", "shinyforms")
-    )
+    # div(class = "created-by",
+    #     "Created with",
+    #     a(href = "https://github.com/daattali/shinyforms", "shinyforms")
+    # )
   )
 }
 
