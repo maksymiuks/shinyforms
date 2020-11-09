@@ -376,6 +376,7 @@ formServerHelper <- function(input, output, session, formInfo) {
   observeEvent(input$submit, {
 
     # User-experience stuff
+    shinyjs::enable("Click.Counter")
     shinyjs::disable("submit")
     shinyjs::show("submit_msg")
     shinyjs::hide("error")
