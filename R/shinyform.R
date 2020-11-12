@@ -215,6 +215,10 @@ formUI <- function(formInfo) {
               input <- numericInput(ns(question$id), NULL, 0)
             } else if (question$type == "checkbox") {
               input <- checkboxInput(ns(question$id), label, FALSE)
+            } else if (question$type == "checkbox_multi") {
+              input <- checkboxGroupInput(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
+            } else if (question$type == "radio") {
+              input <- radioButtons(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
             }
 
             div(
@@ -433,6 +437,17 @@ formServerHelper <- function(input, output, session, formInfo) {
     }
     shinyjs::show("form")
     shinyjs::hide("thankyou_msg")
+  })
+  
+  
+  observe({
+    if(formInfo()$questions[[1]]$type == "checkbox_multi") {
+      lengths <- sapply(fieldsAll(), function(x) {
+                   if (length(input[[x]]) > 3) {
+                     updateCheckboxGroupInput(session, x, selected= tail(input[[x]], 3))
+                   }
+                 })
+    }
   })
   
   # Gather all the form inputs (and add timestamp)
