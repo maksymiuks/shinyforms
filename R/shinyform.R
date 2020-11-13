@@ -138,6 +138,8 @@ loadDataGsheets <- function() {
 #'
 #' @param formInfo A list with param: id, questions and storage 
 #' 
+#' @importFrom shinyjqui orderInput
+#' 
 #' @examples  
 #' if (interactive()) {
 #' library(shiny)
@@ -219,6 +221,8 @@ formUI <- function(formInfo) {
               input <- checkboxGroupInput(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
             } else if (question$type == "radio") {
               input <- radioButtons(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
+            } else if (question$type == "order") {
+              input <- orderInput(ns(question$id), label, items = question$choices)
             }
 
             div(
@@ -357,7 +361,14 @@ formServerHelper <- function(input, output, session, formInfo) {
   
   fieldsMandatory <- reactive(Filter(function(x) {!is.null(x$mandatory) && x$mandatory }, questions()))
   fieldsMandatory <- reactive(unlist(lapply(fieldsMandatory(), function(x) { x$id })))
-  fieldsAll <- reactive(unlist(lapply(questions(), function(x) { x$id })))
+  fieldsAll <- reactive(unlist(lapply(questions(), function(x) {
+    if (x$type == "order") {
+      ret <- paste0(x$id, "_order", collapse = "")
+    } else {
+     ret <- x$id 
+    }
+    ret
+  })))
   
   observe({
     mandatoryFilled <-
@@ -410,6 +421,7 @@ formServerHelper <- function(input, output, session, formInfo) {
         return()
       }
     }
+  
     
     # Save the data (show an error message in case of error)
     tryCatch({
@@ -450,13 +462,21 @@ formServerHelper <- function(input, output, session, formInfo) {
     }
   })
   
-  # Gather all the form inputs (and add timestamp)
+  
   formData <- reactive({
-    data <- sapply(fieldsAll(), function(x) input[[x]])
+    data <- sapply(fieldsAll(), function(x) {
+     ret <- input[[x]]
+     if (length(ret) > 1) {
+       ret <- paste0(ret, collapse = "-")
+     }
+     ret
+    })
     data <- c(data, timestamp = as.integer(Sys.time()))
     data <- t(data)
     data
   }) 
+  
+  
   
   output$responsesTable <- DT::renderDataTable({
     if (!values$adminVerified) {
