@@ -220,7 +220,7 @@ formUI <- function(formInfo) {
             } else if (question$type == "checkbox_multi") {
               input <- checkboxGroupInput(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
             } else if (question$type == "radio") {
-              input <- radioButtons(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
+              input <- radioButtons(ns(question$id), NULL, FALSE, choices = question$choices, inline = question$inline)
             } else if (question$type == "order") {
               input <- orderInput(ns(question$id), label, items = question$choices)
             }
