@@ -261,8 +261,8 @@ formUI <- function(formInfo) {
       div(
         id = ns("thankyou_msg"),
         class = "thankyou_msg",
-        strong(responseText), br(),
-        actionLink(ns("submit_another"), "Submit another response")
+        strong(responseText), br()
+        #actionLink(ns("submit_another"), "Submit another response")
       )
     ),
     shinyjs::hidden(
