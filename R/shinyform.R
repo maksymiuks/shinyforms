@@ -221,7 +221,7 @@ formUI <- function(formInfo) {
             } else if (question$type == "checkbox_multi") {
               input <- checkboxGroupInput(ns(question$id), label, FALSE, choices = question$choices, inline = question$inline)
             } else if (question$type == "radio") {
-              input <- radioButtons(ns(question$id), NULL, FALSE, choices = question$choices, inline = question$inline)
+              input <- radioButtons(ns(question$id), NULL, choices = question$choices, inline = question$inline, selected = question$selected)
             } else if (question$type == "order") {
               input <- orderInput(ns(question$id), label, items = question$choices)
             }
@@ -243,7 +243,7 @@ formUI <- function(formInfo) {
           }
         )
       ),
-      actionButton(ns("submit"), "Submit", class = "btn-primary"),
+      actionButton(ns("submit"), "Submit Answers", class = "btn-primary"),
       if (!is.null(formInfo$reset) && formInfo$reset) {
         actionButton(ns("reset"), "Reset")
       },
@@ -456,10 +456,22 @@ formServerHelper <- function(input, output, session, formInfo) {
   observe({
     if(formInfo()$questions[[1]]$type == "checkbox_multi") {
       lengths <- sapply(fieldsAll(), function(x) {
-                   if (length(input[[x]]) > 3) {
-                     updateCheckboxGroupInput(session, x, selected= tail(input[[x]], 3))
-                   }
-                 })
+        if (length(input[[x]]) > 3) {
+          updateCheckboxGroupInput(session, x, selected= tail(input[[x]], 3))
+        }
+      })
+    }
+  })
+  
+  observe({
+    if(formInfo()$questions[[1]]$type == "checkbox_multi") {
+      lengths <- sapply(fieldsAll(), function(x) {
+        if (length(input[[x]]) == 0) {
+          shinyjs::disable("submit")
+        } else {
+          shinyjs::enable("submit")
+        }
+      })
     }
   })
   
