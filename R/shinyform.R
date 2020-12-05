@@ -122,7 +122,7 @@ loadDataFlatfile <- function(storage) {
 # @param storage A list with variable type defining users perferred type of storage and storage key
 saveDataGsheets <- function(data, storage) {
   sheet_append(storage$key, data = cbind(as.data.frame(data), storage$domain_knowledge, storage$xai_knowledge, storage$last_phone, storage$sample,
-                                         storage$email), sheet = storage$sheet)
+                                         storage$email_address), sheet = storage$sheet)
 }
 
 
